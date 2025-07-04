@@ -2858,3 +2858,287 @@ paths:
           description: Successful response
           content:
             application/json: {}
+
+  /chat/removeProfilePicture/{instanceName}:
+    delete:
+      tags:
+        - Chat Controller
+      summary: Remove the profile picture of the current account.
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+
+  /chat/markChatUnread/{instanceName}:
+    put:
+      tags:
+        - Chat Controller
+      summary: Mark a specific chat as unread based on the last message.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                chat:
+                  type: string
+                  description: "The chat JID (optional when lastMessage provided)."
+                lastMessage:
+                  type: object
+                  required:
+                    - key
+                  properties:
+                    key:
+                      type: object
+                      required:
+                        - id
+                        - remoteJid
+                        - fromMe
+                      properties:
+                        id:
+                          type: string
+                        remoteJid:
+                          type: string
+                        fromMe:
+                          type: boolean
+                    messageTimestamp:
+                      type: integer
+              required:
+                - lastMessage
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "201":
+          description: Chat marked as unread
+          content:
+            application/json: {}
+
+  /chat/sendPresence/{instanceName}:
+    post:
+      tags:
+        - Chat Controller
+      summary: Send a presence update (composing, recording, etc.) to a specific chat number.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+                  description: "Recipient phone number."
+                options:
+                  type: object
+                  required:
+                    - presence
+                    - delay
+                  properties:
+                    presence:
+                      type: string
+                      enum: [unavailable, available, composing, recording, paused]
+                    delay:
+                      type: integer
+                      description: "Delay in milliseconds before sending the presence."
+              required:
+                - number
+                - options
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "201":
+          description: Presence update sent
+          content:
+            application/json: {}
+
+  /chat/updateMessage/{instanceName}:
+    put:
+      tags:
+        - Chat Controller
+      summary: Edit a previously sent message.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+                text:
+                  type: string
+                  description: "New text that should replace the previous content."
+                key:
+                  type: object
+                  required:
+                    - id
+                    - remoteJid
+                    - fromMe
+                  properties:
+                    id:
+                      type: string
+                    remoteJid:
+                      type: string
+                    fromMe:
+                      type: boolean
+              required:
+                - number
+                - text
+                - key
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "200":
+          description: Message updated
+          content:
+            application/json: {}
+
+  /chat/updateBlockStatus/{instanceName}:
+    put:
+      tags:
+        - Chat Controller
+      summary: Block or unblock a WhatsApp number.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                number:
+                  type: string
+                status:
+                  type: string
+                  enum: [block, unblock]
+              required:
+                - number
+                - status
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "201":
+          description: Block status updated
+          content:
+            application/json: {}
+
+  /group/acceptInviteCode/{instanceName}:
+    get:
+      tags:
+        - Group Controller
+      summary: Accept a WhatsApp group invite using the invite code.
+      parameters:
+        - name: inviteCode
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "Group invite code (22 character alphanumeric)."
+          example: "F1EX5QZxO181L3TMVP31gY"
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "200":
+          description: Invite accepted
+          content:
+            application/json: {}
+
+  /instance/registerMobileCode/{instanceName}:
+    post:
+      tags:
+        - Instance Controller
+      summary: Register the mobile verification code received during multi-device pairing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mobileCode:
+                  type: string
+                  description: "Numeric code shown on the mobile device."
+              required:
+                - mobileCode
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "200":
+          description: Mobile code registered
+          content:
+            application/json: {}
+
+  /instance/setPresence/{instanceName}:
+    post:
+      tags:
+        - Instance Controller
+      summary: Set the presence status (available, composing, etc.) for your own WhatsApp account.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                presence:
+                  type: string
+                  enum: [unavailable, available, composing, recording, paused]
+              required:
+                - presence
+      parameters:
+        - name: instanceName
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The name of the instance.
+          example: "evolution"
+      responses:
+        "201":
+          description: Presence updated
+          content:
+            application/json: {}
