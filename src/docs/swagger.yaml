@@ -62,6 +62,7 @@ tags:
   - name: Typebot
   - name: Proxy
   - name: Chama AI
+  - name: SQS
 paths:
   /instance/create:
     post:
@@ -2041,6 +2042,88 @@ paths:
       tags:
         - RabbitMQ
       summary: Retrieve the RabbitMQ settings for a specific instance.
+      parameters:
+        - name: instanceName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: "- required"
+          example: "evolution"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+
+  /sqs/set/{instanceName}:
+    post:
+      tags:
+        - SQS
+      summary: Set up or modify the SQS for an instance.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+                  description: "Indicates whether to enable the SQS integration."
+                events:
+                  type: array
+                  enum:
+                    [
+                      "APPLICATION_STARTUP",
+                      "QRCODE_UPDATED",
+                      "MESSAGES_SET",
+                      "MESSAGES_UPSERT",
+                      "MESSAGES_UPDATE",
+                      "MESSAGES_DELETE",
+                      "SEND_MESSAGE",
+                      "CONTACTS_SET",
+                      "CONTACTS_UPSERT",
+                      "CONTACTS_UPDATE",
+                      "PRESENCE_UPDATE",
+                      "CHATS_SET",
+                      "CHATS_UPSERT",
+                      "CHATS_UPDATE",
+                      "CHATS_DELETE",
+                      "GROUPS_UPSERT",
+                      "GROUP_UPDATE",
+                      "GROUP_PARTICIPANTS_UPDATE",
+                      "CONNECTION_UPDATE",
+                      "LABELS_EDIT",
+                      "LABELS_ASSOCIATION",
+                      "CALL",
+                      "NEW_JWT_TOKEN",
+                      "TYPEBOT_START",
+                      "TYPEBOT_CHANGE_STATUS",
+                      "CHAMA_AI_ACTION",
+                    ]
+                  items:
+                    type: string
+                  description: "List of events to be sent to the SQS."
+      parameters:
+        - name: instanceName
+          in: path
+          schema:
+            type: string
+          required: true
+          description: "- required"
+          example: "evolution"
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json: {}
+
+  /sqs/find/{instanceName}:
+    get:
+      tags:
+        - SQS
+      summary: Retrieve the SQS settings for a specific instance.
       parameters:
         - name: instanceName
           in: path
